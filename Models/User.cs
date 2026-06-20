@@ -5,12 +5,12 @@ namespace pocket_service.Models
     public class User
     {
         public Guid Id {get; set;} = Guid.NewGuid();
-        public string FirstName {get; set;} = null;
-        public string LastName {get; set;} = null;
-        public string Email {get; set;} = null;
-        public string PhoneNumber {get; set;} = null;
-        public string PasswordHash {get; set;} = null;
-        public string DrivingLicense {get; set;} = null;
+        public string FirstName {get; set;} = null!;
+        public string LastName {get; set;} = null!;
+        public string Email {get; set;} = null!;
+        public string PhoneNumber {get; set;} = null!;
+        public string PasswordHash {get; set;} = null!;
+        public string DrivingLicense {get; set;} = null!;
         public bool EmailVerified {get; set;} = false;
         public bool EmailTokenUsed {get; set;} = false;
         public bool PasswordForgetToken {get; set;} = false;

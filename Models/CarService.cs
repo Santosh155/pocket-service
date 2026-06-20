@@ -5,8 +5,8 @@ namespace pocket_service.Models
     public class CarService
     {
         public Guid Id {get; set;} = Guid.NewGuid();
-        public string ServiceType {get; set;} = null;
-        public string ServiceDescription {get; set;} = null;
+        public string ServiceType {get; set;} = null!;
+        public string ServiceDescription {get; set;} = null!;
         public DateTime ServiceDate {get; set;}
         public decimal ServiceCost {get; set;}
         public DateTime DateOfPayment {get; set;}
