@@ -1,8 +1,9 @@
 using System.Collections.Concurrent;
 using System.Reflection.Metadata;
+using BCrypt.Net;
 using pocket_service.Models;
 
-namespace pokcet_service.Services.InMemory
+namespace pocket_service.Services.InMemory
 {
     public class InMemoryUserStore
     {
@@ -11,12 +12,12 @@ namespace pokcet_service.Services.InMemory
 
         public InMemoryUserStore()
         {
-            var admin = new UserStringHandle
+            var admin = new User
             {
                 Email = "admin@example.com",
-                PasswordHash = BCrypt.Net.BCrypt.HashPasswrod("Admin123!"),
-                Role = "User",
-                EmailConfirmed = true
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+                Role = UserRole.User,
+                EmailVerified = true
             };
             Users[admin.Id] = admin;
         }

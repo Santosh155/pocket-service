@@ -22,7 +22,7 @@ namespace pocket_service.Middleware
             }
             catch (Exception ex)
             {
-                _logger.logError(ex, "An unhandled exception occured");
+                _logger.LogError(ex, "An unhandled exception occured");
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 var response = JsonSerializer.Serialize( new { message = "An error occured while processing your request."});

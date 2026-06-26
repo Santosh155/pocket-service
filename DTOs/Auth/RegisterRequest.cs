@@ -9,6 +9,7 @@ namespace pocket_service.DTOs.Auth
         public string Password {get; set;} = null!;
         public string? DrivingLicense {get; set;}
         public AddressDto? Address {get; set;}
+        public string? Role {get; set;}
 
     }
 }

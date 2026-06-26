@@ -23,16 +23,20 @@ namespace pocket_service.UsersController
         [HttpGet("id:guid")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var u = await _users.GetByIdAsync();
+            var u = await _users.GetByIdAsync(id);
             if (u == null) return NotFound();
             return Ok(new UserDto {Id = u.Id, Email = u.Email});
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateUserDto dto)
+        public async Task<IActionResult> Create([FromBody] UserDto dto)
         {   
-            var user = new pocket_service.Models.User{Email = dto.Email, Role = dto.Role};
+            var user = new pocket_service.Models.User
+            {
+                Email = dto.Email, 
+                Role = Enum.Parse<pocket_service.Models.UserRole>(dto.Role)
+            };
             var created = await _users.CreateAsync(user, dto.Password);
             return CreatedAtAction(nameof(Get), new {id = created.Id}, new UserDto {Id = created.Id, Email = created.Email});
         }

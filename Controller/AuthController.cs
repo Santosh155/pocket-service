@@ -27,18 +27,18 @@ namespace pocket_service.Controller
             return Ok(res);
         }
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh([FromBody] RefreshRequest req)
+        public async Task<IActionResult> Refresh([FromBody] string token)
         {
             var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-            var res = await _auth.RefreshTokenAsync(req, ip ?? "unknown");
+            var res = await _auth.RefreshTokenAsync(token, ip ?? "unknown");
             return Ok(res);
         }
         [HttpPost("revoke")]
-        public async Task<IActionResult> Revoke([FromBody] RevokeRequest req)
+        public async Task<IActionResult> Revoke([FromBody] string token)
         {
             var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-            var res = await _auth.RevokeTokenAsync(req, ip ?? "unknown");
-            return NoContext();
+            await _auth.RevokeTokenAsync(token, ip ?? "unknown");
+            return NoContent();
         }
     }
 }

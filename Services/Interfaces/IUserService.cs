@@ -4,9 +4,9 @@ namespace pocket_service.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<User?> GetByIdAsync (int id);
+        Task<User?> GetByIdAsync (Guid id);
         Task<User?> GetUserAsync (string email);
         Task<User> CreateAsync (User user, string password);
-        Task<IEnumerable> GetAllAsync();
+        Task<IEnumerable<User>> GetAllAsync();
     }
 }

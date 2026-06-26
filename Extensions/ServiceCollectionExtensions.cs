@@ -6,9 +6,9 @@ using pocket_service.Services.InMemory;
 
 namespace pocket_service.Extensions
 {
-    public class ServiceCollectionExtensions
+    public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddCustomerService(this IServiceCollection Services, IConfiguration config)
+        public static IServiceCollection AddCustomerService(this IServiceCollection services, IConfiguration config)
         {
             // Register application services
             services.AddSingleton<IUserService, UserService>();

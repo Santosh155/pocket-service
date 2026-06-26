@@ -4,7 +4,7 @@ namespace pocket_service.Extensions
 {
     public static class ConfigurationExtensions
     {
-        public static string GetJwtKey(this Iconfiguration config)=> 
-            config.GetSection("jwt:key").value ?? throw new Exception("JWT key not found");
+        public static string GetJwtKey(this IConfiguration config)=> 
+            config.GetSection("jwt:key").Value ?? throw new Exception("JWT key not found");
     }
 }
