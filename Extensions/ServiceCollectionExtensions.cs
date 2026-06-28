@@ -11,12 +11,12 @@ namespace pocket_service.Extensions
         public static IServiceCollection AddCustomerService(this IServiceCollection services, IConfiguration config)
         {
             // Register application services
-            services.AddSingleton<IUserService, UserService>();
-            services.AddSingleton<IAuthService, AuthService>();
-            services.AddSingleton<ITokenService, TokenService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ITokenService, TokenService>();
 
             // Add to IMemory and replace it with EF/Dbcontext later
-            services.AddSingleton<InMemoryUserStore>();
+            services.AddScoped<InMemoryUserStore>();
 
             return services;
         }

@@ -1,26 +1,29 @@
 using pocket_service.Models;
 using pocket_service.Services.Interfaces;
-using pocket_service.Services.InMemory;
+using pocket_service.Data;
+using System.Data.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace pocket_service.Services.Implementations
 {
     public class UserService: IUserService
     {
-        private InMemoryUserStore _store;
-        public UserService(InMemoryUserStore store) => _store = store;
+        private readonly ApplicationDbContext _db;
+        public UserService(ApplicationDbContext db) => _db = db;
         public Task<User?> GetByIdAsync (Guid id)=>
-            Task.FromResult(_store.Users.TryGetValue(id, out var u) ? u : null);
+            _db.Users.FindAsync(id).AsTask();
         public Task<User?> GetUserAsync (string email) =>
-            Task.FromResult(_store.Users.Values.FirstOrDefault(u=>u.Email.Equals(email, StringComparison.OrdinalIgnoreCase)));
+            _db.Users.FirstOrDefaultAsync(u=>u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
         
-        public Task<User> CreateAsync (User user, string password)
+        public async Task<User> CreateAsync (User user, string password)
         {
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
-            _store.Users[user.Id] = user;
-            return Task.FromResult(user);
+            _db.Users.Add(user);
+            await _db.SaveChangesAsync();
+            return user;
         }
         
-        public Task<IEnumerable<User>> GetAllAsync() =>
-            Task.FromResult(_store.Users.Values.AsEnumerable());
+        public async Task<IEnumerable<User>> GetAllAsync() =>
+            await _db.Users.ToListAsync();
     }
 }

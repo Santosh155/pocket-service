@@ -1,6 +1,13 @@
 @pocket_service_HostAddress = http://localhost:5249
 
-GET {{pocket_service_HostAddress}}/weatherforecast/
+POST {{pocket_service_HostAddress}}/api/user
 Accept: application/json
 
+{
+    "FirstName": "firstn",
+    "LastName": "Lastn",
+    "Email": "test@test.com",
+    "Role": "User",
+    "Password": "testpass"
+}
 ###

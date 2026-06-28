@@ -10,7 +10,7 @@ namespace pocket_service.Models
         public string Email {get; set;} = null!;
         public string PhoneNumber {get; set;} = null!;
         public string PasswordHash {get; set;} = null!;
-        public string DrivingLicense {get; set;} = null!;
+        public string? DrivingLicense {get; set;}
         public bool EmailVerified {get; set;} = false;
         public bool EmailTokenUsed {get; set;} = false;
         public bool PasswordForgetToken {get; set;} = false;

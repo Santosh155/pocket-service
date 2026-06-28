@@ -34,11 +34,22 @@ namespace pocket_service.UsersController
         {   
             var user = new pocket_service.Models.User
             {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
                 Email = dto.Email, 
-                Role = Enum.Parse<pocket_service.Models.UserRole>(dto.Role)
+                Role = Enum.Parse<pocket_service.Models.UserRole>(dto.Role),
+                PhoneNumber = dto.PhoneNumber
             };
             var created = await _users.CreateAsync(user, dto.Password);
-            return CreatedAtAction(nameof(Get), new {id = created.Id}, new UserDto {Id = created.Id, Email = created.Email});
+            return CreatedAtAction(nameof(Get), new {id = created.Id}, 
+                new UserDto 
+                {
+                    Id = created.Id, 
+                    Email = created.Email,
+                    FirstName = created.FirstName,
+                    LastName = created.LastName, 
+                    Role = created.Role.ToString()
+                });
         }
     }
 }
