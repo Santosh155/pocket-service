@@ -12,8 +12,12 @@ namespace pocket_service.Services.Implementations
         public UserService(ApplicationDbContext db) => _db = db;
         public Task<User?> GetByIdAsync (Guid id)=>
             _db.Users.FindAsync(id).AsTask();
-        public Task<User?> GetUserAsync (string email) =>
-            _db.Users.FirstOrDefaultAsync(u=>u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+        public async Task<User?> GetUserAsync (string email)
+        {
+            if(string.IsNullOrWhiteSpace(email)) return null;
+            var normalize = email.Trim().ToLower();
+            return await _db.Users.FirstOrDefaultAsync(u=>u.Email.ToLower() == normalize);
+        }
         
         public async Task<User> CreateAsync (User user, string password)
         {

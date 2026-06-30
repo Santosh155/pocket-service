@@ -18,7 +18,6 @@ namespace pocket_service.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().Property(u=>u.Role).HasConversion<string>();
-            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             base.OnModelCreating(modelBuilder);
