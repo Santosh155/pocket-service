@@ -9,7 +9,7 @@ namespace pocket_service.Models
         public int PostCode {get; set;}
         public string Suburb {get; set;} = null!;
         public string State {get; set;} = null!;
-        public int Latitude {get; set;}
-        public int Longitude {get; set;}
+        public decimal Latitude {get; set;}
+        public decimal Longitude {get; set;}
     }
 }

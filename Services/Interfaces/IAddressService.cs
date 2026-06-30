@@ -2,10 +2,10 @@ using pocket_service.Models;
 
 namespace pocket_service.Services.Interfaces
 {
-    public class IAddressService
+    public interface IAddressService
     {
         Task<Address?> GetByAddressIdAsync(Guid id);
-        Task<Address?> GetByAddressPostCodeAsync(string post);
+        Task<Address?> GetByAddressPostCodeAsync(int post);
         Task<Address> CreateAddressAsync(Address address);
         Task<IEnumerable<Address>> GetAllAddressAsync();
     }

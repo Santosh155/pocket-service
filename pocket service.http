@@ -1,13 +1,21 @@
 @pocket_service_HostAddress = http://localhost:5249
 
 POST {{pocket_service_HostAddress}}/api/user
-Accept: application/json
+Content-Type: application/json
 
 {
     "FirstName": "firstn",
     "LastName": "Lastn",
     "Email": "test@test.com",
     "Role": "User",
-    "Password": "testpass"
+    "Password": "testpass",
+    "PhoneNumber": "0090909090",
+    "HouseNumber":"10", 
+    "StreetName": "wood street", 
+    "Suburb" : "Ascot park", 
+    "PostCode": "5043", 
+    "State": "SA", 
+    "Latitude": "40", 
+    "Longitude": "30"
 }
 ###

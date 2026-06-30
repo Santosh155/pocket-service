@@ -1,4 +1,4 @@
-namespace pocket_service.DTOs
+namespace pocket_service.DTOs.Auth
 {
     public class AddressDto
     {

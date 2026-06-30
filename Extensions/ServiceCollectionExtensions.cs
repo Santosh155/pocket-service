@@ -14,6 +14,7 @@ namespace pocket_service.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IAddressService, AddressService>();
 
             // Add to IMemory and replace it with EF/Dbcontext later
             services.AddScoped<InMemoryUserStore>();

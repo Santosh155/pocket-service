@@ -1,9 +1,9 @@
 using pocket_service.Models;
-using pocket_service.Services.Interface;
+using pocket_service.Services.Interfaces;
 using pocket_service.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace pocket_service.Services.Implementation
+namespace pocket_service.Services.Implementations
 {
     public class AddressService: IAddressService
     {
@@ -12,8 +12,8 @@ namespace pocket_service.Services.Implementation
         public Task<Address?> GetByAddressIdAsync(Guid id) =>
             _db.Address.FindAsync(id).AsTask();
 
-        public Task<Address?> GetByAddressPostCodeAsync(int? post) =>
-            _db.Address.FirstOrDetaultAsync(u=> post != null && u.SomeIntField == post);
+        public Task<Address?> GetByAddressPostCodeAsync(int post) =>
+            _db.Address.FirstOrDefaultAsync(u=> u.PostCode == post);
         
         public async Task<Address> CreateAddressAsync(Address address)
         {
@@ -22,7 +22,7 @@ namespace pocket_service.Services.Implementation
             return address;
         }
 
-        public async Task<IEnumerable<Address>> GetAllAddressAsync =>
+        public async Task<IEnumerable<Address>> GetAllAddressAsync() =>
             await _db.Address.ToListAsync();
         
     }
