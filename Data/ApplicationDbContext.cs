@@ -14,5 +14,14 @@ namespace pocket_service.Data
         public DbSet<CarService> CarServices { get; set; }
         public DbSet<Mechanic> Mechanics { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().Property(u=>u.Role).HasConversion<string>();
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
