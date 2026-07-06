@@ -11,9 +11,10 @@ namespace pocket_service.Models
         public string PhoneNumber {get; set;} = null!;
         public string PasswordHash {get; set;} = null!;
         public string? DrivingLicense {get; set;}
+        public int? EmailToken{get; set;}
         public bool EmailVerified {get; set;} = false;
         public bool EmailTokenUsed {get; set;} = false;
-        public bool PasswordForgetToken {get; set;} = false;
+        public int? PasswordForgetToken {get; set;}
         public bool PasswordForgetTokenUsed {get; set;} = false;
         public UserRole Role {get; set;} = UserRole.User;
         public Guid AddressId {get; set;} 

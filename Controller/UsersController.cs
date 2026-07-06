@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
 using pocket_service.DTOs.User;
 using pocket_service.DTOs.Auth;
 using pocket_service.Models;
@@ -46,7 +47,7 @@ namespace pocket_service.UsersController
                 if (checkEmail != null)
                     return Conflict(new {message = "Email already in use"});
                 
-                var address = new pocket_service.Models.Address
+                var address = new Address
                 {
                     UnitNumber = dto.UnitNumber ?? 0,
                     HouseNumber = dto.HouseNumber, 
@@ -58,14 +59,17 @@ namespace pocket_service.UsersController
                     Longitude = dto.Longitude
                 };
                 var addressCreated = await _address.CreateAddressAsync(address);
-                var user = new pocket_service.Models.User
+                int token = RandomNumberGenerator.GetInt32(100000, 999999);
+                // var response = await _users.UserEmailVerify(res.Id, token);
+                var user = new User
                 {
                     FirstName = dto.FirstName,
                     LastName = dto.LastName,
                     Email = dto.Email, 
-                    Role = Enum.Parse<pocket_service.Models.UserRole>(dto.Role),
+                    Role = Enum.Parse<UserRole>(dto.Role),
                     PhoneNumber = dto.PhoneNumber,
-                    AddressId = addressCreated.Id
+                    AddressId = addressCreated.Id,
+                    EmailToken = token
                 };
                 var created = await _users.CreateAsync(user, dto.Password);
                 return CreatedAtAction(nameof(Get), 
@@ -78,7 +82,6 @@ namespace pocket_service.UsersController
                         LastName = created.LastName,
                         Role = created.Role.ToString(),
                         PhoneNumber = created.PhoneNumber,
-                    
                         UnitNumber = addressCreated.UnitNumber,
                         HouseNumber = addressCreated.HouseNumber,
                         StreetName = addressCreated.StreetName,
@@ -89,10 +92,27 @@ namespace pocket_service.UsersController
                         Longitude = addressCreated.Longitude        
                         }
                     );
+            }
+            catch(Exception ex){
+                return Conflict(new {message =  ex.Message});
+            }
         }
-        catch(Exception ex){
-            return Conflict(new {message =  ex.Message});
-        }
+
+        [HttpPatch("verify-email-token")]
+        public async Task<IActionResult> VerifyEmailToken([FromBody] VerifyEmailDto req)
+        {
+            try
+            {
+                var res = await _users.GetUserAsync(req.Email);
+                if(res == null)
+                    return NotFound(new {message = "User not found"});
+                var response = await _users.UserEmailVerify(res.Id, req.EmailToken);
+                return Ok(new { message = "Email verified successfully "});
+            }
+            catch (Exception ex)
+            {
+                return Conflict(new {message = ex.Message, stackTrace = ex.StackTrace});
+            }
         }
         
     }

@@ -4,18 +4,25 @@ POST {{pocket_service_HostAddress}}/api/user
 Content-Type: application/json
 
 {
-    "FirstName": "firstn",
-    "LastName": "Lastn",
-    "Email": "test@test.com",
+    "FirstName": "firstn 13",
+    "LastName": "Lastn 13",
+    "Email": "tes13@test.com",
     "Role": "User",
     "Password": "testpass",
     "PhoneNumber": "0090909090",
     "HouseNumber":"10", 
-    "StreetName": "wood street", 
-    "Suburb" : "Ascot park", 
+    "StreetName": "wood street 2", 
+    "Suburb" : "Ascot park 22", 
     "PostCode": "5043", 
-    "State": "SA", 
-    "Latitude": "40", 
-    "Longitude": "30"
+    "State": "NSW", 
+    "Latitude": "50", 
+    "Longitude": "20"
 }
 ###
+
+PATCH {{pocket_service_HostAddress}}/api/user/send-email-token
+Content-Type: application/json
+
+{
+    "Email": "tes12@test.com"
+}
