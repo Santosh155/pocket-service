@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using pocket_service.Extensions;
 using pocket_service.Middleware;
 using pocket_service.Data;
@@ -24,11 +26,11 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIsuser = false,
+        ValidateIssuer = false,
         ValidateAudience = false,
         ValidateLifetime = true,
-        ValidateIsuserSigningKey = true,
-        IsuserSigningKey = new SymmetricSecurity(Encoding.UTF8.GetBytes(builder.Configuration["jwt:key"]!))
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["jwt:key"]!))
     };
 });
 
