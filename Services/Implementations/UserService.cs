@@ -66,6 +66,14 @@ namespace pocket_service.Services.Implementations
             return existingUser;
         }
 
+        public async Task ChangePasswordAsync(Guid Id, string NewPassword)
+        {
+            var existingUser = await _db.Users.FindAsync(Id) ?? throw new Exception("User not found");
+            var newPassword = BCrypt.Net.BCrypt.HashPassword(NewPassword);
+            existingUser.PasswordHash = newPassword;
+            await _db.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<User>> GetAllAsync() =>
             await _db.Users.ToListAsync();
     }

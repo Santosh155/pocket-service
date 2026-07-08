@@ -1,3 +1,4 @@
+/*
 using Microsoft.AspNetCore.Mvc;
 using pocket_service.DTOs.Auth;
 using pocket_service.Services.Interfaces;
@@ -42,3 +43,4 @@ namespace pocket_service.Controller
         }
     }
 }
+*/

@@ -1,117 +1,80 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using pocket_service.Data;
 using pocket_service.DTOs.Auth;
 using pocket_service.Models;
 using pocket_service.Services.Interfaces;
-using pocket_service.Services.InMemory;
+using pocket_service.Services.Implementations;
 
 namespace pocket_service.Services.Implementations
 {
-    public class AuthService: IAuthService
+    public class AuthService : IAuthService
     {
-        private readonly IUserService _userService;
-        private readonly ITokenService _tokenService;
-        private readonly InMemoryUserStore _store;
+        private readonly ApplicationDbContext _db;
         private readonly IConfiguration _config;
+        private readonly ITokenService _tokenService;
 
-        public AuthService(IUserService userService, ITokenService tokenService, InMemoryUserStore store, IConfiguration config)
+        public AuthService(
+            ApplicationDbContext db, IConfiguration config,  ITokenService tokenService)
         {
-            _userService = userService;
-            _tokenService = tokenService;
-            _store = store;
+            _db = db;
             _config = config;
+            _tokenService = tokenService;
         }
-
-        public async Task<AuthResponse> RegisterAsync(RegisterRequest request, string ipAddress)
+        public async Task<RefreshToken> SaveRefreshTokenAsync(RefreshToken token)
         {
-            var exists = await _userService.GetUserAsync(request.Email);
-            if(exists != null) throw new InvalidOperationException("User with this email already exists.");
-
-            var user = new User
+            try
             {
-                Email = request.Email,
-                Role = string.IsNullOrWhiteSpace(request.Role) 
-                    ? UserRole.User 
-                    : Enum.Parse<UserRole>(request.Role, ignoreCase: true),
-                EmailVerified = false
-            };
-
-            await _userService.CreateAsync(user, request.Password);
-            var access = _tokenService.GenerateAccessToken(user);
-            var refresh = _tokenService.GenerateRefreshToken();
-
-            var rt = new RefreshToken
+                _db.RefreshTokens.Add(token);
+                await _db.SaveChangesAsync();
+                return token;
+            } catch (Exception ex)
             {
-                Token = refresh,
-                UserId = user.Id,
-                ExpireDate = DateTime.UtcNow.AddDays(double.Parse(_config["jwt:RefreshTokenLifetimeDays"]!))
-            };
-            _store.RefreshTokens[refresh] = rt;
-            return new AuthResponse
-            {
-                Token = refresh,
-                ExpireDate = DateTime.UtcNow.AddMinutes(double.Parse(_config["jwt:AccessTokenLifetimeMinutes"]!))
-            };
-        }
-
-        public async Task<AuthResponse> LoginAsync(LoginRequest request, string ipAddress)
-        {
-            var user = await _userService.GetUserAsync(request.Email)
-            ?? throw new InvalidOperationException("Invalid Credentials");
-
-            if(!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) 
-            throw new InvalidOperationException("Invalid Credentials");
-
-            var access = _tokenService.GenerateAccessToken(user);
-            var refresh = _tokenService.GenerateRefreshToken();
-            var rt = new RefreshToken
-            {
-                Token = refresh,
-                ExpireDate = DateTime.UtcNow.AddDays(double.Parse(_config["jwt:RefreshTokenLifetimeDays"]!)),
-                RemoteIp = ipAddress
-            };
-            _store.RefreshTokens[refresh] = rt;
-
-            return new AuthResponse
-            {
-                Token = refresh,
-                ExpireDate = DateTime.UtcNow.AddMinutes(double.Parse(_config["jwt:AccessTokenLifetimeMinutes"]!))
-            };
-        }
-        public Task<AuthResponse> RefreshTokenAsync(string token, string ipAddress)
-        {
-            if(!_store.RefreshTokens.TryGetValue(token, out var rt) || rt.RevokeAt!= null ||
-                rt.ExpireDate <= DateTime.UtcNow)
-                throw new InvalidOperationException("Invalid Refresh Tokens");
-
-            var user = _store.Users[rt.UserId];
-            //rotate
-            rt.RevokeAt = DateTime.UtcNow;
-            var newRefresh = _tokenService.GenerateRefreshToken();
-            var newRt = new RefreshToken
-            {
-                Token = newRefresh,
-                UserId = user.Id,
-                ExpireDate = DateTime.UtcNow.AddDays(double.Parse(_config["jwt:RefreshTokenLifetimeDays"]!)),
-                RemoteIp = ipAddress
-            };
-            _store.RefreshTokens[newRefresh] = newRt;
-            var access = _tokenService.GenerateAccessToken(user);
-
-            return Task.FromResult(new AuthResponse
-            {
-                Token = access,
-                RefreshToken = newRefresh,
-                ExpireDate = DateTime.UtcNow.AddMinutes(double.Parse(_config["jwt:AccessTokenLifetimeMinutes"]!))
-            });
-        }
-
-        public Task RevokeTokenAsync(string token, string ipAddress)
-        {
-            if(_store.RefreshTokens.TryGetValue(token, out var rt))
-            {
-                rt.RevokeAt = DateTime.UtcNow;
+                throw new Exception("Error saving refresh token: " + ex.Message, ex);
             }
-            return Task.CompletedTask;
         }
 
+        public async Task<AuthResponse> RefreshTokenAsync(string refreshToken, string? ipAddress)
+        {
+            var existingToken = await _db.RefreshTokens.Include(x => x.User)
+                .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
+            if (existingToken == null || !existingToken.IsActive)
+                throw new Exception("Invalid or expired refresh token");    
+             if(!existingToken.IsActive)
+                throw new Exception("Refresh token expired or revoked");
+
+            var user = existingToken.User ?? throw new Exception("User not found");
+            existingToken.RevokeAt = DateTime.UtcNow;
+
+            var newAccessToken = _tokenService.GenerateAccessToken(user);
+            var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+            var refreshTokenEntity = new RefreshToken
+            {
+                UserId = user.Id,
+                Token = newRefreshToken,
+                ExpireDate =
+                    DateTime.UtcNow.AddDays(
+                        double.Parse(
+                            _config["jwt:RefreshTokenLifetimeDays"]!
+                        )
+                    ),
+                RemoteIp = ipAddress,
+                ReplacedByToken = newRefreshToken
+            };
+            _db.RefreshTokens.Add(refreshTokenEntity);
+            await _db.SaveChangesAsync();
+            return new AuthResponse
+            {
+                Token = newAccessToken,
+                RefreshToken = newRefreshToken,
+                ExpireDate =
+                    DateTime.UtcNow.AddMinutes(
+                        double.Parse(
+                            _config["jwt:AccessTokenLifetimeMinutes"]!
+                        )
+                    )
+            };
+        }
     }
 }
