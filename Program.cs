@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using pocket_service.Extensions;
 using pocket_service.Middleware;
 using pocket_service.Data;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIsuser = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIsuserSigningKey = true,
+        IsuserSigningKey = new SymmetricSecurity(Encoding.UTF8.GetBytes(builder.Configuration["jwt:key"]!))
+    };
+});
 
 builder.Services.AddCustomerService(builder.Configuration);
 builder.Services.AddDbContext<ApplicationDbContext>(options=>
