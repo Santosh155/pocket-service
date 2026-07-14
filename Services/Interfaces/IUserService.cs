@@ -10,6 +10,7 @@ namespace pocket_service.Services.Interfaces
         Task<User> UserUpdateAsync(Guid Id, User user);
         Task<User> UserEmailVerify(Guid Id, int token);
         Task ChangePasswordAsync(Guid Id, string NewPassword);
+        Task CreateMechanicAsync(Guid Id);
         Task<IEnumerable<User>> GetAllAsync();
     }
 }

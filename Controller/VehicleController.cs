@@ -57,7 +57,7 @@ namespace pocket_service.Controller
             {
                 var getUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var verifyVehicle = await _vehicle.GetVehicleById(Guid.Parse(getUser)) 
-                    ?? throw new Exception(new {"You don't have permission, please try again with different user account"});
+                    ?? throw new Exception("You don't have permission, please try again with different user account");
                 if(!verifyVehicle.Any(v=> v.Id == carS.VehicleId))
                     return NotFound(new{message = "Vehicle not found or You don't have permission"});
                 var carAddress = new Address

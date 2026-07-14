@@ -84,6 +84,10 @@ namespace pocket_service.UsersController
                     EmailToken = token
                 };
                 var created = await _users.CreateAsync(user, dto.Password);
+                if(dto.Role == "Mechanic")
+                {
+                   await _users.CreateMechanicAsync(created.Id);
+                }
                 return CreatedAtAction(nameof(Get), 
                     new {id = created.Id}, 
                     new UserAddressDto 
@@ -106,7 +110,7 @@ namespace pocket_service.UsersController
                     );
             }
             catch(Exception ex){
-                return Conflict(new {message =  ex.Message});
+                return Conflict(new {message =  ex.Message, stackTrace = ex.StackTrace});
             }
         }
 

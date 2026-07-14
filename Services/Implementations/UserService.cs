@@ -76,5 +76,16 @@ namespace pocket_service.Services.Implementations
 
         public async Task<IEnumerable<User>> GetAllAsync() =>
             await _db.Users.ToListAsync();
+        
+        public async Task CreateMechanicAsync(Guid Id)
+        {
+            var mechanic = new Mechanic
+            {
+                UserId = Id,
+                MechanicLicense = "PENDING",
+            };
+            _db.Mechanics.Add(mechanic);
+            await _db.SaveChangesAsync();
+        }
     }
 }
