@@ -4,7 +4,8 @@ namespace pocket_service.DTOs.Vehicle
     {
         public string ServiceType {get; set;} = null!;
         public string ServiceDescription {get; set;} = null!;
-        public DateTime? ServiceDate {get; set;}
+        public DateTime ServiceDate {get; set;}
+        public Guid VehicleId{get; set;}
         public int? UnitNumber {get; set;}
         public int HouseNumber {get; set;}
         public string? StreetName {get; set;}

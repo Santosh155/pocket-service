@@ -27,9 +27,23 @@ namespace pocket_service.Services.Implementations
             }
         }
 
-        public async Task<Vehicle> GetVehicleById(Guid id)
+        public async Task<List<Vehicle>> GetVehicleById(Guid id)
         {
-            return await _db.Vehicles.FindAsync(id);
+            return await _db.Vehicles.Where(v => v.UserId == id).ToListAsync();
+        }
+
+        public async Task<CarService> RequestVehicleService(CarService carService)
+        {
+            try
+            {
+                 _db.CarServices.Add(carService);
+                await _db.SaveChangesAsync();
+                return carService;
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.InnerException?.Message ?? ex.Message, ex);
+            }
+           
         }
     }
 }

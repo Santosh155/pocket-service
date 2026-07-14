@@ -13,8 +13,10 @@ namespace pocket_service.Models
         public ServiceStatus ServiceStatus {get; set;} = ServiceStatus.Pending;
         public Guid VehicleId {get; set;}
         public Vehicle? Vehicle {get; set;}
-        public Guid MechanicId {get; set;}
+        public Guid? MechanicId {get; set;}
         public Mechanic? Mechanic {get; set;}
+        public Guid UserId {get; set;}
+        public User? User{get; set;}
         public Guid AddressId {get; set;}
         public Address? Address {get; set;}
     }

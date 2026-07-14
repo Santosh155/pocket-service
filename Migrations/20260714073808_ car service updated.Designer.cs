@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using pocket_service.Data;
@@ -11,9 +12,11 @@ using pocket_service.Data;
 namespace pocket_service.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260714073808_ car service updated")]
+    partial class carserviceupdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,7 +75,7 @@ namespace pocket_service.Migrations
                     b.Property<DateTime>("DateOfPayment")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("MechanicId")
+                    b.Property<Guid>("MechanicId")
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("ServiceCost")
@@ -279,7 +282,9 @@ namespace pocket_service.Migrations
 
                     b.HasOne("pocket_service.Models.Mechanic", "Mechanic")
                         .WithMany()
-                        .HasForeignKey("MechanicId");
+                        .HasForeignKey("MechanicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("pocket_service.Models.User", "User")
                         .WithMany()
