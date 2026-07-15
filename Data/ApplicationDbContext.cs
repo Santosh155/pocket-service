@@ -18,6 +18,7 @@ namespace pocket_service.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().Property(u=>u.Role).HasConversion<string>();
+            modelBuilder.Entity<CarService>().Property(c=>c.ServiceStatus).HasConversion<string>();
 
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             base.OnModelCreating(modelBuilder);

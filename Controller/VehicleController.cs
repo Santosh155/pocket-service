@@ -87,5 +87,21 @@ namespace pocket_service.Controller
                 return Conflict(new {message = ex.Message});
             }
         }
+
+        [HttpGet("browse-car-service")]
+        public async Task<IActionResult> BrowseCarService()
+        {
+            try
+            {
+                var getUserRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                if(getUserRole != "Mechanic")
+                    return StatusCode(403, new{message = "You don't have a permission"});
+                var result = await _vehicle.GetAllCarService();
+                return Ok(result);
+            }catch(Exception ex)
+            {
+                return Conflict(new {message = ex.Message});
+            }
+        }
     }
 }

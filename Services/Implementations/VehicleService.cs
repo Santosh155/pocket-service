@@ -45,5 +45,10 @@ namespace pocket_service.Services.Implementations
             }
            
         }
+
+        public async Task<IEnumerable<CarService>> GetAllCarService()
+        {
+            return await _db.CarServices.ToListAsync();
+        }
     }
 }

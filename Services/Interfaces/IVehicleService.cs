@@ -7,5 +7,6 @@ namespace pocket_service.Services.Interfaces
         Task<Vehicle> RegisterVehicle(Guid userId, Vehicle vehicle);
         Task<List<Vehicle>> GetVehicleById(Guid id);
         Task<CarService> RequestVehicleService(CarService carService);
+        Task<IEnumerable<CarService>> GetAllCarService();
     }
 }
